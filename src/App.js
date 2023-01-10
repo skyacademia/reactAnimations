@@ -6,6 +6,7 @@ import axios from 'axios'
 
 function App() {
   const [index, setIndex] = useState(0);
+
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
   };
@@ -24,8 +25,7 @@ function App() {
       <section>
         <Routes>
           <Route path='/' element={<Main index={index} handleSelect={handleSelect}></Main>}></Route>
-          <Route path='/search' element={<Search navigate = {navigate}></Search>}></Route>
-          <Route path='/item/:id' element={<Search navigate = {navigate}></Search>}></Route>
+          <Route path='/search' element={<Search navigate={navigate}></Search>}></Route>
         </Routes>
       </section>
     </div>
@@ -34,33 +34,38 @@ function App() {
 
 function Search(props) {
   let [animations, setAnimations] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
+  const [id, setId] = useState(id)
   axios.get('/search').then((result) => {
     let copy = result.data;
     setAnimations(copy);
   })
 
   return (
-    <Container>
-      <Row xs={2} lg={4}>
-        {
-          animations.map((animation) => {
-            return (
-              <Col onClick={()=>{props.navigate(`/item/:${id}`);}}>
-                <Card style={{ width: '18rem' }}>
-                  <Card.Img variant="top" src={process.env.PUBLIC_URL + `/images/animation_keyVisual/${animation.image_path}.jpg`} />
-                  <Card.Body>
-                    <Card.Title>{animation.name}</Card.Title>
-                    {/* <Card.Text>
-                      {animation.info}
-                    </Card.Text> */}
-                  </Card.Body>
-                </Card>
-              </Col>
-            )
-          })
-        }
-      </Row>
-    </Container>
+    <>
+      <Container>
+        <Row xs={2} lg={4}>
+          {
+            animations.map((animation) => {
+              return (
+                <Col onClick={() => {
+                  setId(animation.id);
+                  setModalShow(true);
+                }} >
+                  <Card style={{ width: '18rem' }}>
+                    <Card.Img variant="top" src={process.env.PUBLIC_URL + `/images/animation_keyVisual/${animation.image_path}.jpg`} />
+                    <Card.Body>
+                      <Card.Title>{animation.name}</Card.Title>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              )
+            })
+          }
+        </Row>
+      </Container>
+      {modalShow == true ? <Item animations={animations} id={id} show={modalShow} onHide={() => { setModalShow(false) }}></Item> : null}
+    </>
   )
 }
 
@@ -109,33 +114,47 @@ function Main(props) {
   )
 }
 
-// function Item(){
-  
-//   return(
-//     <Modal
-//     {...props}
-//     size="lg"
-//     aria-labelledby="contained-modal-title-vcenter"
-//     centered
-//   >
-//     <Modal.Header closeButton>
-//       <Modal.Title id="contained-modal-title-vcenter">
-//         Modal heading
-//       </Modal.Title>
-//     </Modal.Header>
-//     <Modal.Body>
-//       <h4>Centered Modal</h4>
-//       <p>
-//         Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-//         dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-//         consectetur ac, vestibulum at eros.
-//       </p>
-//     </Modal.Body>
-//     <Modal.Footer>
-//       <Button onClick={props.onHide}>Close</Button>
-//     </Modal.Footer>
-//   </Modal>
-//   )
-// }
+function Item(props) {
+  let animation = props.animations.find((element, index, array) => {
+    if (element.id === props.id) {
+      return true;
+    }
+  })
+  return (
+    <>
+    <Modal
+      show={props.show}
+      onHide={props.onHide}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      dialogClassName="modal-70w"
+      centered
+    >
+      <Modal.Header closeButton>
+        
+        <Modal.Title id="contained-modal-title-vcenter">
+        <img
+          className="d-block w-100"
+          src={process.env.PUBLIC_URL + `/images/animation_keyVisual/${animation.image_path}.jpg`}
+          alt="First slide"
+        /><br/>
+          {animation.name}
+          <p>{animation.genre} / {animation.age==="ALL" ? "전체이용가" : animation.age+"세 이상"} / {animation.opening_year}년 {animation.opening_quarter}분기</p>
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        
+        <h4>소개글</h4>
+        <p>
+          {animation.info}
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+    </>
+  )
+}
 
 export default App;
