@@ -131,12 +131,11 @@ function Item(props) {
       centered
     >
       <Modal.Header closeButton>
-        
         <Modal.Title id="contained-modal-title-vcenter">
         <img
-          className="d-block w-100"
+          className="d-block h-25"
           src={process.env.PUBLIC_URL + `/images/animation_keyVisual/${animation.image_path}.jpg`}
-          alt="First slide"
+          alt="animation Poster"
         /><br/>
           {animation.name}
           <p>{animation.genre} / {animation.age==="ALL" ? "전체이용가" : animation.age+"세 이상"} / {animation.opening_year}년 {animation.opening_quarter}분기</p>
