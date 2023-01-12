@@ -36,10 +36,13 @@ function Search(props) {
   let [animations, setAnimations] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [id, setId] = useState(id)
-  axios.get('/search').then((result) => {
-    let copy = result.data;
-    setAnimations(copy);
-  })
+  useEffect(()=>{
+    axios.get('/search').then((result) => {
+      let copy = result.data;
+      setAnimations(copy);
+    })
+  },[setAnimations]);
+
 
   return (
     <>
@@ -138,7 +141,7 @@ function Item(props) {
           alt="animation Poster"
         /><br/>
           {animation.name}
-          <p>{animation.genre} / {animation.age==="ALL" ? "전체이용가" : animation.age+"세 이상"} / {animation.opening_year}년 {animation.opening_quarter}분기</p>
+          <p>{animation.genre1}{animation.genre2!==null ? ", "+animation.genre2 : null} / {animation.age==="ALL" ? "전체이용가" : animation.age+"세 이상"} / {animation.opening_year}년 {animation.opening_quarter}분기</p>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
