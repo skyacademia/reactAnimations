@@ -6,6 +6,7 @@ const path = require('path');
 const port = 3000;
 
 const db = new sqlite3.Database('./data.sqlite3')
+let count = 1;
 
 app.use(express.static(path.join(__dirname, '../build')));
 app.use(cors());
@@ -20,22 +21,13 @@ app.listen(port, () => {
 
 app.get("/search", (req, res) => {
   db.serialize(()=>{
-    db.all("select * from animation_info",(err,rows)=>{
+    db.all(`select * from animation_info limit ${(count-1)*8} ,8`,(err,rows)=>{
+      count=+1;
       res.send(rows);
-    })
+     })
   });
-  
-  // const jsonData= require('./data.json'); 
-  // res.send(jsonData);
 })
 
-app.get("/search:id", (req, res) => {
-  const jsonData= require('./data.json');
-  let param = Number(req.params.id);
-  res.send(jsonData);
-  z
-})
-
-// app.get('*', function (req, res) {
-//   res.sendFile(path.join(__dirname, '/react-project/build/index.html'));
-// });
+app.get('*', function (req, res) {
+  res.sendFile(path.join(__dirname, '../build/index.html'));
+});
