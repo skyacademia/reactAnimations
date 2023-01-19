@@ -13,6 +13,7 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../build/index.html'));
+  console.log("index.html 페이지 전송")
 });
 
 app.listen(port, () => {
@@ -24,6 +25,7 @@ app.get("/search", (req, res) => {
     db.all(`select * from animation_info limit ${(count-1)*8} ,8`,(err,rows)=>{
       count=+1;
       res.send(rows);
+      console.log(`DB data rows ${rows.length}개 전송`)
      })
   });
 })
